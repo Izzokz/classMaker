@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/**/
-/*:::  ::::::::   */
-/*   CMCompose.cpp  :+:  :+::+:   */
-/*+:+ +:+ +:+ */
-/*   By: kzhen-cl <marvin@42.fr>+#+  +:+   +#+*/
-/*+#+#+#+#+#+   +#+   */
-/*   Created: 2025/05/16 12:36:54 by kzhen-cl  #+##+# */
-/*   Updated: 2025/05/16 12:36:57 by kzhen-cl ###   ########.fr   */
-/**/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   CMCompose.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kzhen-cl <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/16 16:23:29 by kzhen-cl          #+#    #+#             */
+/*   Updated: 2025/05/16 16:23:31 by kzhen-cl         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "CMCompose.hpp"
@@ -94,7 +94,7 @@ void	CMCompose::printOp(void) const
 			{
 				_hpp << "\t\t" << _className << "\toperator" << op << "(int);\n";
 				_cpp << "\n" << _className << "\t" << _className << "::operator" << op
-					<< "(int)\n{\n\treturn (*this);\n}\n";
+					<< "(int)\n{\n\t" << _className << "\ttmp\n\n\treturn (tmp);\n}\n";
 			}
 		}
 		else if (op == "[]")
@@ -154,10 +154,8 @@ void	CMCompose::compose(void) const
 		_cpp << "\n}\n\n";
 	_cpp << _className << "\t&" << _className << "::operator=(const " << _className << " &cpy)\n{\n\t";
 	if (_gDebug)
-		_cpp << "std::cout << \"" << _className << " copy assignment operator called\\n\";\n}\n\n";
-	else
-		_cpp << "\n}\n\n";
-	_cpp << _className << "::~" << _className << "(void)\n{\n\t";
+		_cpp << "std::cout << \"" << _className << " copy assignment operator called\\n\";\n";
+	_cpp << "return (*this);\n}\n\n" << _className << "::~" << _className << "(void)\n{\n\t";
 	if (_gDebug)
 		_cpp << "std::cout << \"" << _className << " destructor called\\n\";\n}\n";
 	else
