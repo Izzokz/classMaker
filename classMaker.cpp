@@ -10,10 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fstream>
-#include <iostream>
+#include "CMCompose.hpp"
 
 bool	gDebug = 0;
+
+void	parseCompose(CMCompose &constructor, std::string &rules)
+{
+	size_t			semi = rules.find(';');
+
+	if (semi == std::string::npos)
+		return ;
+	std::string		ops = rules.substr(semi + 1);
+	std::istringstream	iss(ops);
+	std::string 		op;
+	while (iss >> op)
+		constructor << op;
+}
 
 int	main(int argc, char *argv[])
 {
@@ -26,44 +38,23 @@ int	main(int argc, char *argv[])
 	while (--argc)
 	{
 		++argv;
-		std::ofstream	hpp(((std::string)*argv + ".hpp").c_str());
+		std::string	className = std::string(*argv).substr(0, std::string(*argv).find(' '));
+		std::ofstream	hpp((className + ".hpp").c_str());
 		if (!hpp.is_open())
 		{
-			std::cout << "\e[31;1m[Fatal Error] Can't open " << (std::string)*argv + ".hpp\e[0m\n";
-			return (2);
+			std::cout << "\e[31;1m[Fatal Error] Can't open " << className + ".hpp\e[0m\n";
+			continue ;
 		}
-		std::ofstream	cpp(((std::string)*argv + ".cpp").c_str());
+		std::ofstream	cpp((className + ".cpp").c_str());
 		if (!cpp.is_open())
 		{
-			std::cout << "\e[31;1m[Fatal Error] Can't open " << (std::string)*argv + ".cpp\e[0m\n";
+			std::cout << "\e[31;1m[Fatal Error] Can't open " << className + ".cpp\e[0m\n";
 			hpp.close();
-			return (2);
+			continue ;
 		}
-		hpp << "#pragma once\n\nclass\t" << *argv << "\n{\n\tpublic:\n\t\t"
-			<< *argv << "(void);\n\t\t" << *argv << "(const " << *argv << " &cpy);\n\t\t"
-			<< *argv << "\t&operator=(const " << *argv << " &cpy);\n\t\t~"
-			<< *argv << "(void);\n}\n";
-		hpp.close();
-		cpp << "#include \"" << *argv << ".hpp\"\n\n"
-			<< *argv << "::" << *argv << "(void)\n{\n\t";
-		if (gDebug)
-			cpp << "std::cout << \"" << *argv << " default constructor called\\n\";\n}\n\n";
-		else
-			cpp << "\n}\n\n";
-		cpp << *argv << "::" << *argv << "(const " << *argv << " &cpy)\n{\n\t";
-		if (gDebug)
-			cpp << "std::cout << \"" << *argv << " copy constructor called\\n\";\n}\n\n";
-		else
-			cpp << "\n}\n\n";
-		cpp << *argv << "\t&" << *argv << "::operator=(const " << *argv << " &cpy)\n{\n\t";
-		if (gDebug)
-			cpp << "std::cout << \"" << *argv << " copy assignment operator called\\n\";\n}\n\n";
-		else
-			cpp << "\n}\n\n";
-		cpp << *argv << "::~" << *argv << "(void)\n{\n\t";
-		if (gDebug)
-			cpp << "std::cout << \"" << *argv << " destructor called\\n\";\n}\n";
-		else
-			cpp << "\n}\n";
+		CMCompose	constructor(className, hpp, cpp, gDebug);
+		std::string	rules = *argv;
+		parseCompose(constructor, rules);
+		constructor.compose();
 	}
 }

@@ -1,6 +1,6 @@
 NAME = class
 
-SRC = classMaker.cpp
+SRC = CMCompose.cpp classMaker.cpp
 OBJ = $(SRC:.cpp=.o)
 DEP = $(SRC:.cpp=.d)
 
