@@ -13,8 +13,16 @@
 #include <fstream>
 #include <iostream>
 
+bool	gDebug = 0;
+
 int	main(int argc, char *argv[])
 {
+	if (argc > 1 && (std::string)*(argv + 1) == "-d")
+	{
+		gDebug = 1;
+		argc--;
+		argv++;
+	}
 	while (--argc)
 	{
 		++argv;
@@ -37,13 +45,25 @@ int	main(int argc, char *argv[])
 			<< *argv << "(void);\n}\n";
 		hpp.close();
 		cpp << "#include \"" << *argv << ".hpp\"\n\n"
-			<< *argv << "::" << *argv << "(void)\n{\n\t"
-			<< "std::cout << \"" << *argv << " default constructor called\\n\";\n}\n\n"
-			<< *argv << "::" << *argv << "(const " << *argv << " &cpy)\n{\n\t"
-			<< "std::cout << \"" << *argv << " copy constructor called\\n\";\n}\n\n"
-			<< *argv << "\t&" << *argv << "::operator=(const " << *argv << " &cpy)\n{\n\t"
-			<< "std::cout << \"" << *argv << " copy assignment operator called\\n\";\n}\n\n"
-			<< *argv << "::~" << *argv << "(void)\n{\n\t"
-			<< "std::cout << \"" << *argv << " destructor called\\n\";\n}\n";
+			<< *argv << "::" << *argv << "(void)\n{\n\t";
+		if (gDebug)
+			cpp << "std::cout << \"" << *argv << " default constructor called\\n\";\n}\n\n";
+		else
+			cpp << "\n}\n\n";
+		cpp << *argv << "::" << *argv << "(const " << *argv << " &cpy)\n{\n\t";
+		if (gDebug)
+			cpp << "std::cout << \"" << *argv << " copy constructor called\\n\";\n}\n\n";
+		else
+			cpp << "\n}\n\n";
+		cpp << *argv << "\t&" << *argv << "::operator=(const " << *argv << " &cpy)\n{\n\t";
+		if (gDebug)
+			cpp << "std::cout << \"" << *argv << " copy assignment operator called\\n\";\n}\n\n";
+		else
+			cpp << "\n}\n\n";
+		cpp << *argv << "::~" << *argv << "(void)\n{\n\t";
+		if (gDebug)
+			cpp << "std::cout << \"" << *argv << " destructor called\\n\";\n}\n";
+		else
+			cpp << "\n}\n";
 	}
 }
