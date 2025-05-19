@@ -137,7 +137,10 @@ void	CMCompose::printOp(void) const
 
 void	CMCompose::compose(void) const
 {
-	_hpp << "#pragma once\n\nclass\t" << _className << "\n{\n\tpublic:\n\t\t"
+	_hpp << "#pragma once\n\n";
+	if (_gDebug)
+		_hpp << "#include <iostream>\n\n";
+	_hpp << "class\t" << _className << "\n{\n\tpublic:\n\t\t"
 		<< _className << "(void);\n\t\t" << _className << "(const " << _className << " &cpy);\n\t\t"
 		<< _className << "\t&operator=(const " << _className << " &cpy);\n\t\t~"
 		<< _className << "(void);\n";
@@ -152,10 +155,10 @@ void	CMCompose::compose(void) const
 		_cpp << "std::cout << \"" << _className << " copy constructor called\\n\";\n}\n\n";
 	else
 		_cpp << "\n}\n\n";
-	_cpp << _className << "\t&" << _className << "::operator=(const " << _className << " &cpy)\n{\n\t";
+	_cpp << _className << "\t&" << _className << "::operator=(const " << _className << " &cpy)\n{\n";
 	if (_gDebug)
-		_cpp << "std::cout << \"" << _className << " copy assignment operator called\\n\";\n";
-	_cpp << "return (*this);\n}\n\n" << _className << "::~" << _className << "(void)\n{\n\t";
+		_cpp << "\tstd::cout << \"" << _className << " copy assignment operator called\\n\";\n";
+	_cpp << "\treturn (*this);\n}\n\n" << _className << "::~" << _className << "(void)\n{\n\t";
 	if (_gDebug)
 		_cpp << "std::cout << \"" << _className << " destructor called\\n\";\n}\n";
 	else
